@@ -19,14 +19,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module snes_control(
-						//input clk,
-						input [15:0] serial_data,
+						input clk,
+						input  serial_data,
 						output data_latch,
 						output interrupt,
 						output reg data_clock
 						);
 
-reg clk;
+//reg clk;
 reg clk_60;
 reg [15:0] new_reg;
 reg [15:0] old_reg;
@@ -35,20 +35,20 @@ integer i, count_60, count_6us;
 
 initial
 begin
-	data_clock = 1'b1;
-	new_reg=16'hFFFF;
-	old_reg=16'hFFF1;    
-    i=15;
-    count_60=0;
-    count_6us=0;
-    clk_60 = 1'b0;
-	 clk=1'b0;
+	data_clock 	= 1'b1;
+	new_reg 		= 16'hFFFF;
+	old_reg 		= 16'hFFFF;    
+   i				= 15;
+   count_60		= 0;
+   count_6us	= 0;
+   clk_60 		= 1'b0;
+	//clk			= 1'b0;
 end
 
-always
-begin
-	#5 clk=~clk;
-end
+//always
+//begin
+//	#5 clk=~clk;
+//end
 
 //clock 60Hz divider
 always@(posedge clk)
@@ -84,17 +84,18 @@ begin
 	end
 end
 
-//always@(negedge data_clock)
-//begin
-//	//initial i=15
-//	new_reg[i]=serial_data[i];
-//   if(i==0)
-//		i=15;
-//   else
-//		i=i-1;
-//end
+always@(negedge data_clock)
+begin
+	//initial i=15
+	new_reg[i]=serial_data;
+   if(i==0)
+		i=15;
+   else
+		i=i-1;
+end
 
 //interrupt pulse, if you control pulse width, add a count<X in the contional
 assign interrupt = (new_reg!=old_reg & count_60>20400 & count_60<21000 & clk_60); 
 
 endmodule
+
