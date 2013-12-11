@@ -37,7 +37,7 @@ initial
 begin
 	data_clock = 1'b1;
 	new_reg=16'hFFFF;
-	old_reg=16'hFFFF;    
+	old_reg=16'hFFF1;    
     i=15;
     count_60=0;
     count_6us=0;
@@ -63,7 +63,7 @@ begin
 end
 
 assign data_latch = (count_60<=1200 & clk_60); //12us wide pulse every 60Hz
-assign data_clk_en = (count_60>1200 & count_60<19200  & clk_60); //interval for 16 pulses
+assign data_clk_en = (count_60>1200 & count_60<20400  & clk_60); //interval for 16 pulses
 
 always@(posedge clk)
 begin
@@ -84,17 +84,17 @@ begin
 	end
 end
 
-always@(negedge data_clock)
-begin
-	//initial i=15
-	new_reg[i]=serial_data[i];
-   if(i==0)
-		i=15;
-   else
-		i=i-1;
-end
+//always@(negedge data_clock)
+//begin
+//	//initial i=15
+//	new_reg[i]=serial_data[i];
+//   if(i==0)
+//		i=15;
+//   else
+//		i=i-1;
+//end
 
 //interrupt pulse, if you control pulse width, add a count<X in the contional
-assign interrupt = (new_reg!=old_reg & count_60>19200 & count_60<20200 & clk_60); 
+assign interrupt = (new_reg!=old_reg & count_60>20400 & count_60<21000 & clk_60); 
 
 endmodule
